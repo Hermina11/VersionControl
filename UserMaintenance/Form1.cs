@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace UserMaintenance
             InitializeComponent();
             label1.Text = Resource1.FullName;
             button1.Text = Resource1.Add;
+            button2.Text = Resource1.FileW;
             listBox1.DataSource = users;
             listBox1.ValueMember = "ID";
             listBox1.DisplayMember = "FullName";
@@ -37,6 +39,30 @@ namespace UserMaintenance
                
             };
             users.Add(u);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.InitialDirectory = Application.StartupPath;
+            sfd.Filter = "Vesszővel tagolt értékek (*.csv)|*.csv";
+            sfd.DefaultExt = "csv";
+            sfd.AddExtension = true;
+
+            if (sfd.ShowDialog()==DialogResult.OK)
+            {
+                StreamWriter sw = new StreamWriter(sfd.FileName, false, Encoding.Default);
+                    sw.WriteLine("ID;FullName");
+                foreach  (User item in users)
+                {
+                    sw.WriteLine($"{item.ID};{item.FullName}");
+
+
+                }
+                sw.Close();
+
+
+            }
         }
     }
 }
