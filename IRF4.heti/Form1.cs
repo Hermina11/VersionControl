@@ -19,6 +19,10 @@ namespace IRF4.heti
         Excel.Application xlApp; // A Microsoft Excel alkalmazás
         Excel.Workbook xlWB; // A létrehozott munkafüzet
         Excel.Worksheet xlSheet; // Munkalap a munkafüzeten belül
+        
+        
+
+
 
 
 
@@ -49,7 +53,7 @@ namespace IRF4.heti
                 xlSheet = xlWB.ActiveSheet;
 
                 // Tábla létrehozása
-                //CreateTable(); // Ennek megírása a következő feladatrészben következik
+                CreateTable(); // Ennek megírása a következő feladatrészben következik
 
                 // Control átadása a felhasználónak
                 xlApp.Visible = true;
@@ -68,8 +72,8 @@ namespace IRF4.heti
             }
         }
 
-        public void CreatTable() {
-            string[] headers = new string[]   //tömb, anely tartalmazza a tábla fejléceit+egy extra oszlopot
+        public void CreateTable() {
+             string[] headers = new string[]   //tömb, anely tartalmazza a tábla fejléceit+egy extra oszlopot
             {
                   "Kód",
                  "Eladó",
@@ -82,7 +86,7 @@ namespace IRF4.heti
                  "Négyzetméter ár (Ft/m2)"};
             for (int i = 0; i < headers.Length; i++)
             {
-                xlSheet.Cells[1, 1] = headers[0];
+                xlSheet.Cells[1, (i+1)] = headers[i];
             }
             object[,] values = new object[Flats.Count, headers.Length];
             string price;
@@ -107,15 +111,13 @@ namespace IRF4.heti
                 values[counter, 6] = f.FloorArea;
                 values[counter, 7] = f.Price;
 
-                price = GetCell(counter, 7);
-                quadro = GetCell(counter, 6);
-                values[counter, 8] = $"={price}/{quadro}";
+                values[counter, 8] = $"=H{counter+2}*10000000/G{counter+2}";
                 counter++;
             }
             xlSheet.get_Range(
              GetCell(2, 1),
              GetCell(1 + values.GetLength(0), values.GetLength(1))).Value2 = values;
-            FormatTable();
+            FormatTable(headers.Length);
         }
 
         private string GetCell(int x, int y)
@@ -135,9 +137,9 @@ namespace IRF4.heti
             return ExcelCoordinate;
         }
 
-        public void FormatTable()
+        public void FormatTable(int headersLength)
         {
-            Excel.Range headerRange = xlSheet.get_Range(GetCell(1, 1), GetCell(1, headers.Length));
+            Excel.Range headerRange = xlSheet.get_Range(GetCell(1, 1), GetCell(1, headersLength));
             headerRange.Font.Bold = true;
             headerRange.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
             headerRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
