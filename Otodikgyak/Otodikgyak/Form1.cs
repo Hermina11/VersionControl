@@ -25,6 +25,9 @@ namespace Otodikgyak
             InitializeComponent();
             GetExchangeRates();
             dataGridView1.DataSource = Rates;
+            getXML();
+            Diagram();
+
             
         }
         private void GetExchangeRates() {
@@ -40,6 +43,13 @@ namespace Otodikgyak
             var response = mnbService.GetExchangeRates(request);
             var result = response.GetExchangeRatesResult;
             getXML(result);
+
+        }
+
+
+        private void RefreshData() {
+            Rates.Clear();
+
 
         }
 
