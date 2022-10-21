@@ -1,4 +1,5 @@
-﻿using Otodikgyak.MnbServiceReference1;
+﻿using Otodikgyak.Entities;
+using Otodikgyak.MnbServiceReference1;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,11 +14,15 @@ namespace Otodikgyak
 {
     public partial class Form1 : Form
     {
-       
+        List<GetExchangeRatesRequestBody> ExchangeRateData = new List<GetExchangeRatesRequestBody>();
+        BindingList<RateData> Rates = new BindingList<RateData>();
+        
+
         public Form1()
         {
             InitializeComponent();
             GetExchangeRates();
+            dataGridView1.DataSource = Rates;
             
         }
         private void GetExchangeRates() {
