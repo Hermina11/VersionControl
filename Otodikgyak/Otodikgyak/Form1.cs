@@ -16,33 +16,21 @@ namespace Otodikgyak
 {
     public partial class Form1 : Form
     {
-       List<GetExchangeRatesRequestBody> ExchangeRateData = new List<GetExchangeRatesRequestBody>();
-       
-       
+       /*List<GetExchangeRatesRequestBody> ExchangeRateData = new List<GetExchangeRatesRequestBody>();
+        */
+        BindingList<RateData> Rates = new BindingList<RateData>();
+        BindingList<string> Currencies = new BindingList<string>();
+
 
 
         public Form1()
         {
             InitializeComponent();
-            var mnbService = new MNBArfolyamServiceSoapClient();
-            var request = new GetCurrenciesRequestBody();
-            var response = mnbService.GetCurrencies(request);
-            var result = response.GetCurrenciesResult;
-
-            var xml = new XmlDocument();
-            xml.LoadXml(result);
-            foreach (XmlElement element in xml.DocumentElement)
-            {
-                var childElement = (XmlElement)element.ChildNodes[0];
-                var c = (element.GetAttribute("curr")).ToString();
-                if (childElement == null) continue;
-
-                Currencies.Add(c);
-            }
-
-            RefreshData();
+            dataGridView1.DataSource = Rates;
             comboBox1.DataSource = Currencies;
 
+            GetCurrencies();
+            RefreshData();
         }
 
 
@@ -67,8 +55,8 @@ namespace Otodikgyak
 
         private void RefreshData() {
             Rates.Clear();
-            dataGridView1.DataSource = Rates;
-            getXML(Web());
+            Web();
+            getXML();
             Diagram();
 
 
@@ -78,9 +66,9 @@ namespace Otodikgyak
             var mnbService = new MNBArfolyamServiceSoapClient();
             var request = new GetExchangeRatesRequestBody()
             {
-                currencyNames = (comboBox1.SelectedItem).ToString(),
-                startDate = (dateTimePicker1.Value).ToString(),
-                endDate = (dateTimePicker2.Value).ToString()
+                currencyNames = comboBox1.SelectedItem.ToString(),
+                startDate = dateTimePicker1.Value.ToString(),
+                endDate = dateTimePicker2.Value.ToString()
             };
             var response = mnbService.GetExchangeRates(request);
             var result = response.GetExchangeRatesResult;
@@ -88,12 +76,11 @@ namespace Otodikgyak
             return result;
         }
 
-        BindingList<RateData> Rates = new BindingList<RateData>();
-        BindingList<string> Currencies = new BindingList<string>();
+        
 
-        private void getXML(string result) {
+        private void getXML() {
             var xml = new XmlDocument();
-            xml.LoadXml(result);
+            xml.LoadXml(Web());
 
             foreach (XmlElement element in xml.DocumentElement)
             {
@@ -107,6 +94,8 @@ namespace Otodikgyak
 
                 // Valuta
                 var childElement = (XmlElement)element.ChildNodes[0];
+                if (childElement == null)
+                    continue;
                 rate.Currency = childElement.GetAttribute("curr");
 
                 // Érték
@@ -135,6 +124,28 @@ namespace Otodikgyak
             chartArea.AxisX.MajorGrid.Enabled = false;
             chartArea.AxisY.MajorGrid.Enabled = false;
             chartArea.AxisY.IsStartedFromZero = false;
+        }
+
+        private void GetCurrencies()
+        {
+            var mnbService = new MNBArfolyamServiceSoapClient();
+            var request = new GetCurrenciesRequestBody()
+            {
+            };
+
+            var response = mnbService.GetCurrencies(request);
+            var result = response.GetCurrenciesResult;
+            var xml = new XmlDocument();
+            xml.LoadXml(result);
+
+            foreach (XmlElement element in xml.DocumentElement)
+            {
+                string currencies = element.InnerText;
+                for (int i = 0; i < currencies.Length; i += 3)
+                {
+                    Currencies.Add(currencies.Substring(i, 3));
+                }
+            }
         }
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
