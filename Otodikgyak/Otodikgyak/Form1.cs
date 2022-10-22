@@ -16,21 +16,38 @@ namespace Otodikgyak
 {
     public partial class Form1 : Form
     {
-        List<GetExchangeRatesRequestBody> ExchangeRateData = new List<GetExchangeRatesRequestBody>();
-        BindingList<RateData> Rates = new BindingList<RateData>();
-        
+       List<GetExchangeRatesRequestBody> ExchangeRateData = new List<GetExchangeRatesRequestBody>();
+       
+       
+
 
         public Form1()
         {
             InitializeComponent();
-            GetExchangeRates();
-            dataGridView1.DataSource = Rates;
-            getXML();
-            Diagram();
+            var mnbService = new MNBArfolyamServiceSoapClient();
+            var request = new GetCurrenciesRequestBody();
+            var response = mnbService.GetCurrencies(request);
+            var result = response.GetCurrenciesResult;
 
-            
+            var xml = new XmlDocument();
+            xml.LoadXml(result);
+            foreach (XmlElement element in xml.DocumentElement)
+            {
+                var childElement = (XmlElement)element.ChildNodes[0];
+                var c = (element.GetAttribute("curr")).ToString();
+                if (childElement == null) continue;
+
+                Currencies.Add(c);
+            }
+
+            RefreshData();
+            comboBox1.DataSource = Currencies;
+
         }
-        private void GetExchangeRates() {
+
+
+
+       /* private void GetExchangeRates() {
 
             var mnbService = new MNBArfolyamServiceSoapClient();
 
@@ -44,14 +61,35 @@ namespace Otodikgyak
             var result = response.GetExchangeRatesResult;
             getXML(result);
 
-        }
+        }*/
 
+        
 
         private void RefreshData() {
             Rates.Clear();
+            dataGridView1.DataSource = Rates;
+            getXML(Web());
+            Diagram();
 
 
         }
+        private string Web()
+        {
+            var mnbService = new MNBArfolyamServiceSoapClient();
+            var request = new GetExchangeRatesRequestBody()
+            {
+                currencyNames = (comboBox1.SelectedItem).ToString(),
+                startDate = (dateTimePicker1.Value).ToString(),
+                endDate = (dateTimePicker2.Value).ToString()
+            };
+            var response = mnbService.GetExchangeRates(request);
+            var result = response.GetExchangeRatesResult;
+
+            return result;
+        }
+
+        BindingList<RateData> Rates = new BindingList<RateData>();
+        BindingList<string> Currencies = new BindingList<string>();
 
         private void getXML(string result) {
             var xml = new XmlDocument();
@@ -97,6 +135,21 @@ namespace Otodikgyak
             chartArea.AxisX.MajorGrid.Enabled = false;
             chartArea.AxisY.MajorGrid.Enabled = false;
             chartArea.AxisY.IsStartedFromZero = false;
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshData();
+        }
+
+        private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshData();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RefreshData();
         }
     }
     
