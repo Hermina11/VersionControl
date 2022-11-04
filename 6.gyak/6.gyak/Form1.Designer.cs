@@ -29,13 +29,31 @@ namespace _6.gyak
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.mainPaniel = new System.Windows.Forms.Panel();
+            this.SuspendLayout();
+            // 
+            // mainPaniel
+            // 
+            this.mainPaniel.Location = new System.Drawing.Point(363, 82);
+            this.mainPaniel.Name = "mainPaniel";
+            this.mainPaniel.Size = new System.Drawing.Size(200, 100);
+            this.mainPaniel.TabIndex = 0;
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.mainPaniel);
+            this.Name = "Form1";
             this.Text = "Form1";
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Panel mainPaniel;
     }
 }
 
