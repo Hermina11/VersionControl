@@ -1,4 +1,5 @@
-﻿using System;
+﻿using gyak7.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,11 +15,21 @@ namespace gyak7
     {
         PortfolioEntities context = new PortfolioEntities();
         List<Tick> Ticks;
+        List<PortfolioItem> Portfolio = new List<PortfolioItem>();
         public Form1()
         {
             InitializeComponent();
             Ticks = context.Ticks.ToList();
             dataGridView1.DataSource = Ticks;
+            CreatPortfolio();
+        }
+
+        private void CreatPortfolio() {
+            Portfolio.Add(new PortfolioItem() { Index = "OTP", Volume = 10 });
+            Portfolio.Add(new PortfolioItem() { Index = "ZWACK", Volume = 10 });
+            Portfolio.Add(new PortfolioItem() { Index = "ELMU", Volume = 10 });
+
+            dataGridView2.DataSource = Portfolio;
         }
     }
 }
