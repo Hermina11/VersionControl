@@ -112,6 +112,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UnitTestExample.Test\UnitTestExample.Test.csproj">
+      <Project>{a48351bd-f038-45dc-acdc-ecb03e2e65ca}</Project>
+      <Name>UnitTestExample.Test</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
