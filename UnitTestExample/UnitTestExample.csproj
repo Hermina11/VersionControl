@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstractions\IAccountManager.cs" />
+    <Compile Include="AccountControllerTestFixture.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Entities\Account.cs" />
     <Compile Include="Form1.cs">
