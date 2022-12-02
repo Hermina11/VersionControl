@@ -148,5 +148,23 @@ namespace gyak9
             return DeathProbabilities;
 
         }
+
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Start();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() == DialogResult.OK) textBox1.Text = ofd.FileName;
+
+        }
     }
 }
