@@ -21,9 +21,69 @@ namespace gyak9
             BirthProbabilities = GetBirthProbabilities(@"C:\Temp\születés.csv");
             DeathProbabilities = GetDeathProbabilities(@"C:\Temp\halál.csv");
         }
+
+        List<Person> Females = new List<Person>();
+        List<Person> Males = new List<Person>();
+
+        private void Start()
+        {
+            for (int year = 2005; year < 2025; year++)
+            {
+                for (int i = 0; i < Population.Count(); i++)
+                {
+                    SimStep(year, Population[i]);
+                }
+
+                int NumberOfMales = (from x in Population
+                                     where x.Gender == Gender.Male && x.IsAlive
+                                     select x).Count();
+                int NumberOfFemales = (from x in Population
+                                       where x.Gender == Gender.Female && x.IsAlive
+                                       select x).Count();
+
+                Console.WriteLine(
+                    string.Format("Év: {0} Fiúk: {1} Lányok: {2}", year, NumberOfMales, NumberOfFemales));
+
+            }
+        }
+
+        private void SimStep(int year, Person person)
+        {
+            if (!person.IsAlive) return;
+            int age = (year - person.BirthYear);
+
+            var pDeath = (from x in DeathProbabilities
+                          where x.Gender == person.Gender && x.Age == age
+                          select x.Probability).FirstOrDefault();
+
+
+            if (rng.NextDouble() < pDeath) person.IsAlive = false;
+            if (person.IsAlive && person.Gender == Gender.Female)
+            {
+                var pBirth = (from x in BirthProbabilities
+                              where x.Age == age
+                              select x.Probability).FirstOrDefault();
+                if (rng.NextDouble() <= pBirth)
+                {
+                    var newBorn = new Person
+                    {
+                        BirthYear = year,
+                        IsAlive = true,
+                        NumberOfChildren = 0,
+                        Gender = (Gender)(rng.Next(1, 3))
+                    };
+                    Population.Add(newBorn);
+                }
+            }
+        }
+
+
+
         List<Person> Population = new List<Person>();
         List<BirthProbability> BirthProbabilities = new List<BirthProbability>();
         List<DeathProbability> DeathProbabilities = new List<DeathProbability>();
+
+        Random rng = new Random(1234);
         public List<Person> GetPopulation(string csvpath)
         {
 
